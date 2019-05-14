@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  */
 @ReactModule(name = RNEmojiViewManager.REACT_CLASS)
 public class RNEmojiViewManager
-    extends ReactTextAnchorViewManager<RNEmojiCompatTextView, ReactTextShadowNode> {
+    extends ReactTextAnchorViewManager<RNEmojiView, ReactTextShadowNode> {
 
   @VisibleForTesting
   public static final String REACT_CLASS = "RNEmoji";
@@ -33,12 +33,12 @@ public class RNEmojiViewManager
   }
 
   @Override
-  public RNEmojiCompatTextView createViewInstance(ThemedReactContext context) {
-    return new RNEmojiCompatTextView(context);
+  public RNEmojiView createViewInstance(ThemedReactContext context) {
+    return new RNEmojiView(context);
   }
 
   @Override
-  public void updateExtraData(RNEmojiCompatTextView view, Object extraData) {
+  public void updateExtraData(RNEmojiView view, Object extraData) {
     ReactTextUpdate update = (ReactTextUpdate) extraData;
     if (update.containsImages()) {
       Spannable spannable = update.getText();
@@ -58,7 +58,7 @@ public class RNEmojiViewManager
   }
 
   @Override
-  protected void onAfterUpdateTransaction(RNEmojiCompatTextView view) {
+  protected void onAfterUpdateTransaction(RNEmojiView view) {
     super.onAfterUpdateTransaction(view);
     view.updateView();
   }
