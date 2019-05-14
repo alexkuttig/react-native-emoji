@@ -16,7 +16,13 @@ Emoji as React Native component
 npm install --save react-native-emoji
 ```
 
-2. Require in your project
+2. Link package for Android EmojiCompat, which ensures Emojis working on older Android versions
+
+```
+react-native link react-native-emoji
+```
+
+3. Require in your project
 
 ```javascript
 import Emoji from 'react-native-emoji';
