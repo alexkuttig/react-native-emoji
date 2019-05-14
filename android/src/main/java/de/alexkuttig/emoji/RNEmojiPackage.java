@@ -22,7 +22,7 @@ public class RNEmojiPackage implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext context) {
-        return Collections.singletonList((ViewManager) new RNEmojiCompatTextViewManager());
+        return Collections.singletonList((ViewManager) new RNEmojiViewManager());
     }
 
     @Override
