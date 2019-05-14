@@ -34,6 +34,14 @@ npm install --save react-native-emoji
 react-native link react-native-emoji
 ```
 
+Go to `android/app/src/main/java/<yourpackage>/MainApplication.java` and do the following change 
+
+```
+- new RNEmojiPackage()
++ new RNEmojiPackage(MainApplication.this)
+```
+
+
 ### Usage
 
 #### Emoji
