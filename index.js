@@ -1,23 +1,21 @@
 'use strict';
 
 import React from 'react';
-import {Text} from 'react-native';
 import nodeEmoji from 'node-emoji';
 import { requireNativeComponent, Text, Platform } from "react-native";
 const RNEmojiCompatText = requireNativeComponent("RNEmoji");
 
-const EmojiIOS = ({name, ...props}) => (
-    <Text {...props}>{nodeEmoji.get(name)}</Text>
-);
-
-const EmojiAndroid = ({name, ...props}) => (
+const EmojiTextAndroid = (props) => (
     <RNEmojiCompatText {...props}>
-        <Text {...props}>{nodeEmoji.get(name)}</Text>
+        <Text {...props} />
     </RNEmojiCompatText>
 );
 
-
-export default Platform.select({
-    ios: EmojiIOS,
-    android: EmojiAndroid
+export const EmojiText = Platform.select({
+    ios: Text,
+    android: EmojiTextAndroid
 });
+
+export const Emoji = ({name, ...props}) => (
+    <EmojiText {...props}>{nodeEmoji.get(name)}</EmojiText>
+);
