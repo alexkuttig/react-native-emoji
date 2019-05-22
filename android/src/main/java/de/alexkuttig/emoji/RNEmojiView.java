@@ -13,7 +13,6 @@ import android.support.text.emoji.widget.EmojiTextViewHelper;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v7.widget.AppCompatTextView;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.Spanned;
@@ -21,6 +20,8 @@ import android.text.TextUtils;
 import android.text.InputFilter;
 import android.view.Gravity;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.facebook.common.logging.FLog;
 import com.facebook.react.common.ReactConstants;
 import com.facebook.react.uimanager.ReactCompoundView;
@@ -29,7 +30,7 @@ import com.facebook.react.views.view.ReactViewBackgroundManager;
 import com.facebook.react.views.text.*;
 import javax.annotation.Nullable;
 
-public class RNEmojiView extends AppCompatTextView implements ReactCompoundView {
+public class RNEmojiView extends TextView implements ReactCompoundView {
 
   private static final ViewGroup.LayoutParams EMPTY_LAYOUT_PARAMS =
     new ViewGroup.LayoutParams(0, 0);
@@ -37,13 +38,15 @@ public class RNEmojiView extends AppCompatTextView implements ReactCompoundView 
   private boolean mContainsImages;
   private int mDefaultGravityHorizontal;
   private int mDefaultGravityVertical;
+  private boolean mTextIsSelectable;
+  private float mLineHeight = Float.NaN;
   private int mTextAlign = Gravity.NO_GRAVITY;
   private int mNumberOfLines = ViewDefaults.NUMBER_OF_LINES;
   private TextUtils.TruncateAt mEllipsizeLocation = TextUtils.TruncateAt.END;
 
-  private ReactViewBackgroundManager mReactBackgroundManager;
-  private Spannable mSpanned;
-  private EmojiTextViewHelper mEmojiTextViewHelper;
+    private ReactViewBackgroundManager mReactBackgroundManager;
+    private Spannable mSpanned;
+    private EmojiTextViewHelper mEmojiTextViewHelper;
 
   public RNEmojiView(Context context) {
     super(context);
@@ -103,11 +106,6 @@ public class RNEmojiView extends AppCompatTextView implements ReactCompoundView 
         setBreakStrategy(update.getTextBreakStrategy());
       }
     }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      if (getJustificationMode() != update.getJustificationMode()) {
-        setJustificationMode(update.getJustificationMode());
-      }
-    }
   }
 
   @Override
@@ -132,14 +130,7 @@ public class RNEmojiView extends AppCompatTextView implements ReactCompoundView 
     // TODO(5966918): Consider extending touchable area for text spans by some DP constant
     if (text instanceof Spanned && x >= lineStartX && x <= lineEndX) {
       Spanned spannedText = (Spanned) text;
-      int index = -1;
-      try {
-        index = layout.getOffsetForHorizontal(line, x);
-      } catch (ArrayIndexOutOfBoundsException e) {
-        // https://issuetracker.google.com/issues/113348914
-        FLog.e(ReactConstants.TAG, "Crash in HorizontalMeasurementProvider: " + e.getMessage());
-        return target;
-      }
+      int index = layout.getOffsetForHorizontal(line, x);
 
       // We choose the most inner span (shortest) containing character at the given index
       // if no such span can be found we will send the textview's react id as a touch handler
@@ -161,6 +152,12 @@ public class RNEmojiView extends AppCompatTextView implements ReactCompoundView 
     }
 
     return target;
+  }
+
+  @Override
+  public void setTextIsSelectable(boolean selectable) {
+    mTextIsSelectable = selectable;
+    super.setTextIsSelectable(selectable);
   }
 
   @Override
@@ -239,11 +236,6 @@ public class RNEmojiView extends AppCompatTextView implements ReactCompoundView 
     }
   }
 
-  @Override
-  public boolean hasOverlappingRendering() {
-    return false;
-  }
-
   /* package */ void setGravityHorizontal(int gravityHorizontal) {
     if (gravityHorizontal == 0) {
       gravityHorizontal = mDefaultGravityHorizontal;
@@ -298,13 +290,5 @@ public class RNEmojiView extends AppCompatTextView implements ReactCompoundView 
 
   public void setBorderStyle(@Nullable String style) {
     mReactBackgroundManager.setBorderStyle(style);
-  }
-
-  public void setSpanned(Spannable spanned) {
-    mSpanned = spanned;
-  }
-
-  public Spannable getSpanned() {
-    return mSpanned;
   }
 }
